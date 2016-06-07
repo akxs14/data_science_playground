@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<!-- saved from url=(0085)http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/ -->
+<html class=" js flexbox canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths" lang="en-US"><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TPOT: A Python tool for automating data science | Dr. Randal S. Olson</title>
+<script id="twitter-wjs" data-rocketsrc="http://platform.twitter.com/widgets.js" data-rocketoptimized="true"></script><script data-rocketsrc="https://pagead2.googlesyndication.com/pub-config/r20160212/ca-pub-5475335462909831.js" data-rocketoptimized="true"></script><script type="text/javascript" async="" data-rocketsrc="http://www.google-analytics.com/ga.js" data-rocketoptimized="true"></script><script type="text/javascript">
+//<![CDATA[
+try{if (!window.CloudFlare) {var CloudFlare=[{verbose:0,p:1464695832,byc:0,owlid:"cf",bag2:1,mirage2:0,oracle:0,paths:{cloudflare:"/cdn-cgi/nexp/dok3v=1613a3a185/"},atok:"52402ad03942b9cfeed2669f7d24eda1",petok:"dae330174480fe0c54b8908ec50604bcc75e88bd-1464889886-86400",zone:"randalolson.com",rocket:"a",apps:{},sha2test:0}];document.write('<script type="text/javascript" src="//ajax.cloudflare.com/cdn-cgi/nexp/dok3v=e982913d31/cloudflare.min.js"><'+'\/script>');}}catch(e){};
+//]]>
+</script><script type="text/javascript" src="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/cloudflare.min.js"></script><style type="text/css">.cf-hidden { display: none; } .cf-invisible { visibility: hidden; }</style><script data-module="cloudflare/rocket" id="cfjs_block_85faa44bbd" onload="CloudFlare.__cfjs_block_85faa44bbd_load()" onerror="CloudFlare.__cfjs_block_85faa44bbd_error()" onreadystatechange="CloudFlare.__cfjs_block_85faa44bbd_readystatechange()" type="text/javascript" src="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/rocket.js"></script>
+<link rel="profile" href="http://gmpg.org/xfn/11">
+<link rel="pingback" href="http://www.randalolson.com/xmlrpc.php">
+ 
+<meta name="description" itemprop="description" content="Randy Olson demonstrates why designing machine learning pipelines is difficult, and how it can be automated using TPOT.">
+<meta name="keywords" itemprop="keywords" content="data science,machine learning,automated machine learning,python,scikit-learn,sklearn,mnist,random forest,logistic regression,automation,research">
+<link rel="canonical" href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/">
+ 
+<link rel="alternate" type="application/rss+xml" title="Dr. Randal S. Olson » Feed" href="http://www.randalolson.com/feed/">
+<link rel="alternate" type="application/rss+xml" title="Dr. Randal S. Olson » Comments Feed" href="http://www.randalolson.com/comments/feed/">
+<script type="text/rocketscript" data-rocketoptimized="true">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/72x72\/","ext":".png","source":{"concatemoji":"http:\/\/www.randalolson.com\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.5.2"}};
+			!function(a,b,c){function d(a){var c,d,e,f=b.createElement("canvas"),g=f.getContext&&f.getContext("2d"),h=String.fromCharCode;if(!g||!g.fillText)return!1;switch(g.textBaseline="top",g.font="600 32px Arial",a){case"flag":return g.fillText(h(55356,56806,55356,56826),0,0),f.toDataURL().length>3e3;case"diversity":return g.fillText(h(55356,57221),0,0),c=g.getImageData(16,16,1,1).data,d=c[0]+","+c[1]+","+c[2]+","+c[3],g.fillText(h(55356,57221,55356,57343),0,0),c=g.getImageData(16,16,1,1).data,e=c[0]+","+c[1]+","+c[2]+","+c[3],d!==e;case"simple":return g.fillText(h(55357,56835),0,0),0!==g.getImageData(16,16,1,1).data[0];case"unicode8":return g.fillText(h(55356,57135),0,0),0!==g.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+<style type="text/css">img.wp-smiley,img.emoji{display:inline!important;border:none!important;box-shadow:none!important;height:1em!important;width:1em!important;margin:0 .07em!important;vertical-align:-0.1em!important;background:none!important;padding:0!important;}</style>
+<link rel="stylesheet" id="contact-form-7-css" href="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/styles.css" type="text/css" media="all">
+<link rel="stylesheet" id="collapseomatic-css-css" href="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/light_style.css" type="text/css" media="all">
+<link rel="stylesheet" id="responsive-style-css" href="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/style.css" type="text/css" media="all">
+<link rel="stylesheet" id="responsive-media-queries-css" href="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/responsive.css" type="text/css" media="all">
+<link rel="stylesheet" id="genericons-css" href="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/genericons.css" type="text/css" media="all">
+<link rel="stylesheet" id="jetpack_css-css" href="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/jetpack.css" type="text/css" media="all">
+ 
+<script type="text/rocketscript" data-rocketoptimized="true">
+
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-3573562-2']);
+	_gaq.push(['_gat._forceSSL']);
+	_gaq.push(['_trackPageview']);
+
+	(function () {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+
+</script>
+ 
+<script type="text/rocketscript" data-rocketsrc="http://www.randalolson.com/wp-includes/js/jquery/jquery.js?ver=1.12.3" data-rocketoptimized="true"></script>
+<script type="text/rocketscript" data-rocketsrc="http://www.randalolson.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.0" data-rocketoptimized="true"></script>
+<script type="text/rocketscript" data-rocketsrc="http://www.randalolson.com/wp-content/themes/responsive/core/js/responsive-modernizr.min.js?ver=2.6.1" data-rocketoptimized="true"></script>
+<link rel="https://api.w.org/" href="http://www.randalolson.com/wp-json/">
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.randalolson.com/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://www.randalolson.com/wp-includes/wlwmanifest.xml">
+<link rel="prev" title="Why did so many Japanese families avoid having children in 1966?" href="http://www.randalolson.com/2016/05/08/why-did-so-many-japanese-families-avoid-having-children-in-1966/">
+<link rel="next" title="Why is Reddit replacing Imgur?" href="http://www.randalolson.com/2016/05/25/why-is-reddit-replacing-imgur/">
+<meta name="generator" content="WordPress 4.5.2">
+<link rel="shortlink" href="http://www.randalolson.com/?p=8090">
+<link rel="alternate" type="application/json+oembed" href="http://www.randalolson.com/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fwww.randalolson.com%2F2016%2F05%2F08%2Ftpot-a-python-tool-for-automating-data-science%2F">
+<link rel="alternate" type="text/xml+oembed" href="http://www.randalolson.com/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fwww.randalolson.com%2F2016%2F05%2F08%2Ftpot-a-python-tool-for-automating-data-science%2F&amp;format=xml">
+<link href="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/SyntaxHighlighter.css" type="text/css" rel="stylesheet">
+<link rel="dns-prefetch" href="http://v0.wordpress.com/">
+ 
+ 
+<style type="text/css">span.oe_textdirection{unicode-bidi:bidi-override;direction:rtl;}span.oe_displaynone{display:none;}</style>
+<style type="text/css">.broken_link,a.broken_link{text-decoration:line-through;}</style>
+ 
+<meta property="og:type" content="article">
+<meta property="og:title" content="TPOT: A Python tool for automating data science">
+<meta property="og:url" content="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/">
+<meta property="og:description" content="Machine learning is often touted as: A field of study that gives computers the ability to learn without being explicitly programmed. Despite this common claim, anyone who has worked in the field kn…">
+<meta property="article:published_time" content="2016-05-08T23:12:27+00:00">
+<meta property="article:modified_time" content="2016-05-09T12:14:28+00:00">
+<meta property="og:site_name" content="Dr. Randal S. Olson">
+<meta property="og:image" content="http://www.randalolson.com/wp-content/uploads/tpot-demo-mnist-digits.png">
+<meta property="og:image:width" content="1185">
+<meta property="og:image:height" content="1185">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:site" content="@randal_olson">
+<meta name="twitter:image" content="http://www.randalolson.com/wp-content/uploads/tpot-demo-mnist-digits.png?w=640">
+<meta name="twitter:card" content="summary_large_image">
+<script data-rocketsrc="http://www.randalolson.com/wp-includes/js/wp-emoji-release.min.js?ver=4.5.2" data-rocketoptimized="true" type="text/javascript"></script><link rel="stylesheet" type="text/css" id="gravatar-card-css" href="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/hovercard.css"><link rel="stylesheet" type="text/css" id="gravatar-card-services-css" href="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/services.css"><script async="" type="text/javascript" data-rocketsrc="//randalolson.disqus.com/count.js" data-rocketoptimized="true"></script></head>
+<body class="single single-post postid-8090 single-format-standard">
+<div id="container" class="hfeed">
+<div class="skip-container cf">
+<a class="skip-link screen-reader-text focusable" href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#content">↓ Skip to Main Content</a>
+</div> 
+<div id="header">
+<div id="logo">
+<a href="http://www.randalolson.com/"><img src="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/rso_header.png" width="423" height="75" alt="Dr. Randal S. Olson"></a>
+</div> 
+<div id="top-widget" class="top-widget">
+<div id="text-6" class="widget_text"> <div class="textwidget"><strong><font color="red">New!</font></strong> My <a href="http://shop.oreilly.com/product/0636920046592.do" onclick="_gaq.push([&#39;_trackEvent&#39;, &#39;outbound-widget&#39;, &#39;http://shop.oreilly.com/product/0636920046592.do&#39;, &#39;Data Visualization Basics in Python&#39;]);">Data Visualization Basics in Python</a> course is now online.</div>
+</div>
+</div> 
+<div class="main-nav"><ul class="menu"><li><a href="http://www.randalolson.com/">Home</a></li><li class="page_item page-item-29 page_item_has_children"><a href="http://www.randalolson.com/blog/">Blog</a><ul class="children"><li class="page_item page-item-7886"><a href="http://www.randalolson.com/blog/sponsorship/">Sponsorship</a></li><li class="page_item page-item-7893"><a href="http://www.randalolson.com/blog/support/">Support</a></li></ul></li><li class="page_item page-item-19 page_item_has_children"><a href="http://www.randalolson.com/about/">About</a><ul class="children"><li class="page_item page-item-22"><a href="http://www.randalolson.com/about/research/">Current Research</a></li><li class="page_item page-item-981"><a href="http://www.randalolson.com/about/publications/">Publications</a></li><li class="page_item page-item-1497"><a href="http://www.randalolson.com/about/teaching/">Teaching</a></li><li class="page_item page-item-7897"><a href="http://www.randalolson.com/about/teaching-materials/">Teaching Materials</a></li><li class="page_item page-item-1450"><a href="http://www.randalolson.com/about/mentoring/">Mentoring</a></li><li class="page_item page-item-2099"><a href="http://www.randalolson.com/about/coding/">Coding</a></li><li class="page_item page-item-1882"><a href="http://www.randalolson.com/about/press/">Press</a></li></ul></li><li class="page_item page-item-34"><a href="http://www.randalolson.com/contact/">Contact</a></li></ul>
+</div>
+</div> 
+<div id="wrapper" class="clearfix">
+<div id="content" class="grid col-620">
+<script async="" data-rocketsrc="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" type="text/rocketscript" data-rocketoptimized="true"></script>
+ 
+<ins class="adsbygoogle" style="display: block; height: 60px;" data-ad-client="ca-pub-5475335462909831" data-ad-slot="4097645704" data-ad-format="auto" data-adsbygoogle-status="done"><ins id="aswift_0_expand" style="display:inline-table;border:none;height:60px;margin:0;padding:0;position:relative;visibility:visible;width:605px;background-color:transparent"><ins id="aswift_0_anchor" style="display:block;border:none;height:60px;margin:0;padding:0;position:relative;visibility:visible;width:605px;background-color:transparent"><iframe width="605" height="60" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;" src="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/saved_resource.html"></iframe></ins></ins></ins>
+<script type="text/rocketscript" data-rocketoptimized="true">
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+<br>
+<div id="post-8090" class="post-8090 post type-post status-publish format-standard has-post-thumbnail hentry category-machine-learning category-python category-research tag-automation tag-data-science tag-machine-learning">
+<h1 class="entry-title post-title">TPOT: A Python tool for automating data science</h1>
+<div class="post-meta">
+<span class="meta-prep meta-prep-author posted">Posted on </span><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/" title="TPOT: A Python tool for automating data science" rel="bookmark"><time class="timestamp updated" datetime="2016-05-08T19:12:27+00:00">May 8, 2016</time></a><span class="byline"> by </span><span class="author vcard"><a class="url fn n" href="http://www.randalolson.com/author/rhiever/" title="View all posts by Randy Olson">Randy Olson</a></span> </div> 
+<div class="post-entry">
+<a href="https://www.patreon.com/randal_olson"><img src="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/patreon_banner.png" width="50%" style="padding-top: 10px;"></a>
+<p>Machine learning is often <a href="https://en.wikipedia.org/wiki/Machine_learning" onclick="_gaq.push([&#39;_trackEvent&#39;, &#39;outbound-article&#39;, &#39;https://en.wikipedia.org/wiki/Machine_learning&#39;, &#39;touted&#39;]);">touted</a> as:</p>
+<blockquote><p>A field of study that gives computers the ability to learn without being explicitly programmed.</p></blockquote>
+<p>Despite this common claim, anyone who has worked in the field knows that designing effective machine learning systems is a tedious endeavor, and typically requires considerable experience with machine learning algorithms, expert knowledge of the problem domain, and brute force search to accomplish. Thus, contrary to what machine learning enthusiasts would have us believe, <strong>machine learning still requires a considerable amount of explicit programming.</strong></p>
+<p>In this article, we’re going to go over three aspects of machine learning pipeline design that tend to be tedious but nonetheless important. After that, we’re going to step through a demo for a tool that intelligently automates the process of machine learning pipeline design, so we can spend our time working on the more interesting aspects of data science.</p>
+<p>Let’s get started.</p>
+<h3>Model hyperparameter tuning is important</h3>
+<p>One of the most tedious parts of machine learning is model hyperparameter tuning.</p>
+<p>Support vector machines require us to select the ideal kernel, the kernel’s parameters, and the penalty parameter <em>C</em>. Artificial neural networks require us to tune the number of hidden layers, number of hidden nodes, and many more hyperparameters. Even random forests require us to tune the number of trees in the ensemble at a minimum.</p>
+<p>All of these hyperparameters can have significant impacts on how well the model performs. For example, on the <a href="http://yann.lecun.com/exdb/mnist/" onclick="_gaq.push([&#39;_trackEvent&#39;, &#39;outbound-article&#39;, &#39;http://yann.lecun.com/exdb/mnist/&#39;, &#39;MNIST&#39;]);">MNIST</a> handwritten digit data set:</p>
+<p><a href="http://www.randalolson.com/wp-content/uploads/tpot-demo-mnist-digits.png" rel="attachment wp-att-8093"><img src="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/tpot-demo-mnist-digits-1024x1024.png" alt="tpot-demo-mnist-digits" width="600" class="aligncenter size-large wp-image-8093" srcset="http://www.randalolson.com/wp-content/uploads/tpot-demo-mnist-digits-1024x1024.png 1024w, http://www.randalolson.com/wp-content/uploads/tpot-demo-mnist-digits-150x150.png 150w, http://www.randalolson.com/wp-content/uploads/tpot-demo-mnist-digits-300x300.png 300w, http://www.randalolson.com/wp-content/uploads/tpot-demo-mnist-digits-768x768.png 768w, http://www.randalolson.com/wp-content/uploads/tpot-demo-mnist-digits-100x100.png 100w, http://www.randalolson.com/wp-content/uploads/tpot-demo-mnist-digits-200x200.png 200w, http://www.randalolson.com/wp-content/uploads/tpot-demo-mnist-digits-450x450.png 450w, http://www.randalolson.com/wp-content/uploads/tpot-demo-mnist-digits-600x600.png 600w, http://www.randalolson.com/wp-content/uploads/tpot-demo-mnist-digits-900x900.png 900w, http://www.randalolson.com/wp-content/uploads/tpot-demo-mnist-digits.png 1185w" sizes="(max-width: 1024px) 100vw, 1024px"></a></p>
+<p>If we fit a random forest classifier with only 10 trees (scikit-learn’s default):</p>
+<div class="dp-highlighter nogutter"><div class="bar"><div class="tools"><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;ViewSource&#39;,this);return false;">view plain</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;CopyToClipboard&#39;,this);return false;">copy to clipboard</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;PrintSource&#39;,this);return false;">print</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;About&#39;,this);return false;">?</a></div></div><ol start="1" class="dp-py"><li class="alt"><span><span class="keyword">import</span><span>&nbsp;pandas&nbsp;as&nbsp;pd&nbsp;&nbsp;</span></span></li><li class=""><span><span class="keyword">import</span><span>&nbsp;numpy&nbsp;as&nbsp;np&nbsp;&nbsp;</span></span></li><li class="alt"><span><span class="keyword">from</span><span>&nbsp;sklearn.ensemble&nbsp;</span><span class="keyword">import</span><span>&nbsp;RandomForestClassifier&nbsp;&nbsp;</span></span></li><li class=""><span><span class="keyword">from</span><span>&nbsp;sklearn.cross_validation&nbsp;</span><span class="keyword">import</span><span>&nbsp;cross_val_score&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>mnist_data&nbsp;=&nbsp;pd.read_csv(<span class="string">'https://raw.githubusercontent.com/rhiever/Data-Analysis-and-Machine-Learning-Projects/master/tpot-demo/mnist.csv.gz'</span><span>,&nbsp;sep=</span><span class="string">'\t'</span><span>,&nbsp;compression=</span><span class="string">'gzip'</span><span>)&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>cv_scores&nbsp;=&nbsp;cross_val_score(RandomForestClassifier(n_estimators=<span class="number">10</span><span>,&nbsp;n_jobs=-</span><span class="number">1</span><span>),&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X=mnist_data.drop(<span class="string">'class'</span><span>,&nbsp;axis=</span><span class="number">1</span><span>).values,&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y=mnist_data.loc[:,&nbsp;<span class="string">'class'</span><span>].values,&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cv=<span class="number">10</span><span>)&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span><span class="keyword">print</span><span>(cv_scores)&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span>[&nbsp;<span class="number">0.93461813</span><span>&nbsp;&nbsp;</span><span class="number">0.96287836</span><span>&nbsp;&nbsp;</span><span class="number">0.94688749</span><span>&nbsp;&nbsp;</span><span class="number">0.94072275</span><span>&nbsp;&nbsp;</span><span class="number">0.95114286</span><span>&nbsp;&nbsp;</span><span class="number">0.94570653</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;<span class="number">0.94884253</span><span>&nbsp;&nbsp;</span><span class="number">0.94311848</span><span>&nbsp;&nbsp;</span><span class="number">0.93825043</span><span>&nbsp;&nbsp;</span><span class="number">0.95668954</span><span>]&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span><span class="keyword">print</span><span>(np.mean(cv_scores))&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span><span class="number">0.946885709001</span><span>&nbsp;&nbsp;</span></span></li></ol></div><pre name="code" class="python:nogutter" style="display: none;">import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.cross_validation import cross_val_score
+
+mnist_data = pd.read_csv('https://raw.githubusercontent.com/rhiever/Data-Analysis-and-Machine-Learning-Projects/master/tpot-demo/mnist.csv.gz', sep='\t', compression='gzip')
+
+cv_scores = cross_val_score(RandomForestClassifier(n_estimators=10, n_jobs=-1),
+                            X=mnist_data.drop('class', axis=1).values,
+                            y=mnist_data.loc[:, 'class'].values,
+                            cv=10)
+
+print(cv_scores)
+
+[ 0.93461813  0.96287836  0.94688749  0.94072275  0.95114286  0.94570653
+  0.94884253  0.94311848  0.93825043  0.95668954]
+
+print(np.mean(cv_scores))
+
+0.946885709001
+</pre>
+<p>The random forest achieves an average of 94.7% cross-validation accuracy on MNIST. However, what if we tuned that hyperparameter a little bit and provided the random forest with 100 trees instead?</p>
+<div class="dp-highlighter nogutter"><div class="bar"><div class="tools"><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;ViewSource&#39;,this);return false;">view plain</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;CopyToClipboard&#39;,this);return false;">copy to clipboard</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;PrintSource&#39;,this);return false;">print</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;About&#39;,this);return false;">?</a></div></div><ol start="1" class="dp-py"><li class="alt"><span><span>cv_scores&nbsp;=&nbsp;cross_val_score(RandomForestClassifier(n_estimators=</span><span class="number">100</span><span>,&nbsp;n_jobs=-</span><span class="number">1</span><span>),&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X=mnist_data.drop(<span class="string">'class'</span><span>,&nbsp;axis=</span><span class="number">1</span><span>).values,&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y=mnist_data.loc[:,&nbsp;<span class="string">'class'</span><span>].values,&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cv=<span class="number">10</span><span>)&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span><span class="keyword">print</span><span>(cv_scores)&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>[&nbsp;<span class="number">0.96259814</span><span>&nbsp;&nbsp;</span><span class="number">0.97829812</span><span>&nbsp;&nbsp;</span><span class="number">0.9684466</span><span>&nbsp;&nbsp;&nbsp;</span><span class="number">0.96700471</span><span>&nbsp;&nbsp;</span><span class="number">0.966</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">0.96399486</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;<span class="number">0.97113461</span><span>&nbsp;&nbsp;</span><span class="number">0.96755752</span><span>&nbsp;&nbsp;</span><span class="number">0.96397942</span><span>&nbsp;&nbsp;</span><span class="number">0.97684391</span><span>]&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span><span class="keyword">print</span><span>(np.mean(cv_scores))&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span><span class="number">0.968585789367</span><span>&nbsp;&nbsp;</span></span></li></ol></div><pre name="code" class="python:nogutter" style="display: none;">cv_scores = cross_val_score(RandomForestClassifier(n_estimators=100, n_jobs=-1),
+                            X=mnist_data.drop('class', axis=1).values,
+                            y=mnist_data.loc[:, 'class'].values,
+                            cv=10)
+
+print(cv_scores)
+
+[ 0.96259814  0.97829812  0.9684466   0.96700471  0.966       0.96399486
+  0.97113461  0.96755752  0.96397942  0.97684391]
+
+print(np.mean(cv_scores))
+
+0.968585789367
+</pre>
+<p>With such a minor change, we improved the random forest’s average cross-validation accuracy from 94.7% to 96.9%. This small improvement in accuracy can translate into millions of additional digits classified correctly if we’re applying this model on the scale of, say, processing addresses for the U.S. Postal Service.</p>
+<p><strong>Never use the defaults for your model.</strong> Hyperparameter tuning is vitally important for every machine learning project.</p>
+<h3>Model selection is important</h3>
+<p>We all love to think that our favorite model will perform well on every machine learning problem, but different models are better suited for different tasks.</p>
+<p>For example, if we’re working on a signal processing problem where we need to classify whether there’s a “hill” or “valley” in the time series:</p>
+<p><a href="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/tpot-demo-hill-valley.png" rel="attachment wp-att-8092"><img src="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/tpot-demo-hill-valley.png" alt="tpot-demo-hill-valley" width="600" class="aligncenter size-large wp-image-8092" srcset="http://www.randalolson.com/wp-content/uploads/tpot-demo-hill-valley.png 885w, http://www.randalolson.com/wp-content/uploads/tpot-demo-hill-valley-150x150.png 150w, http://www.randalolson.com/wp-content/uploads/tpot-demo-hill-valley-300x300.png 300w, http://www.randalolson.com/wp-content/uploads/tpot-demo-hill-valley-768x768.png 768w, http://www.randalolson.com/wp-content/uploads/tpot-demo-hill-valley-100x100.png 100w, http://www.randalolson.com/wp-content/uploads/tpot-demo-hill-valley-200x200.png 200w, http://www.randalolson.com/wp-content/uploads/tpot-demo-hill-valley-450x450.png 450w, http://www.randalolson.com/wp-content/uploads/tpot-demo-hill-valley-600x600.png 600w" sizes="(max-width: 885px) 100vw, 885px"></a></p>
+<p>And we apply a “tuned” random forest to the problem:</p>
+<div class="dp-highlighter nogutter"><div class="bar"><div class="tools"><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;ViewSource&#39;,this);return false;">view plain</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;CopyToClipboard&#39;,this);return false;">copy to clipboard</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;PrintSource&#39;,this);return false;">print</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;About&#39;,this);return false;">?</a></div></div><ol start="1" class="dp-py"><li class="alt"><span><span class="keyword">import</span><span>&nbsp;pandas&nbsp;as&nbsp;pd&nbsp;&nbsp;</span></span></li><li class=""><span><span class="keyword">import</span><span>&nbsp;numpy&nbsp;as&nbsp;np&nbsp;&nbsp;</span></span></li><li class="alt"><span><span class="keyword">from</span><span>&nbsp;sklearn.ensemble&nbsp;</span><span class="keyword">import</span><span>&nbsp;RandomForestClassifier&nbsp;&nbsp;</span></span></li><li class=""><span><span class="keyword">from</span><span>&nbsp;sklearn.linear_model&nbsp;</span><span class="keyword">import</span><span>&nbsp;LogisticRegression&nbsp;&nbsp;</span></span></li><li class="alt"><span><span class="keyword">from</span><span>&nbsp;sklearn.cross_validation&nbsp;</span><span class="keyword">import</span><span>&nbsp;cross_val_score&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span>hill_valley_data&nbsp;=&nbsp;pd.read_csv(<span class="string">'https://raw.githubusercontent.com/rhiever/Data-Analysis-and-Machine-Learning-Projects/master/tpot-demo/Hill_Valley_without_noise.csv.gz'</span><span>,&nbsp;sep=</span><span class="string">'\t'</span><span>,&nbsp;compression=</span><span class="string">'gzip'</span><span>)&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span>cv_scores&nbsp;=&nbsp;cross_val_score(RandomForestClassifier(n_estimators=<span class="number">100</span><span>,&nbsp;n_jobs=-</span><span class="number">1</span><span>),&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X=hill_valley_data.drop(<span class="string">'class'</span><span>,&nbsp;axis=</span><span class="number">1</span><span>).values,&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y=hill_valley_data.loc[:,&nbsp;<span class="string">'class'</span><span>].values,&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cv=<span class="number">10</span><span>)&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span><span class="keyword">print</span><span>(cv_scores)&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>[&nbsp;<span class="number">0.64754098</span><span>&nbsp;&nbsp;</span><span class="number">0.64754098</span><span>&nbsp;&nbsp;</span><span class="number">0.57024793</span><span>&nbsp;&nbsp;</span><span class="number">0.61983471</span><span>&nbsp;&nbsp;</span><span class="number">0.62809917</span><span>&nbsp;&nbsp;</span><span class="number">0.61983471</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;<span class="number">0.70247934</span><span>&nbsp;&nbsp;</span><span class="number">0.59504132</span><span>&nbsp;&nbsp;</span><span class="number">0.49586777</span><span>&nbsp;&nbsp;</span><span class="number">0.65289256</span><span>]&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span><span class="keyword">print</span><span>(np.mean(cv_scores))&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span><span class="number">0.617937948787</span><span>&nbsp;&nbsp;</span></span></li></ol></div><pre name="code" class="python:nogutter" style="display: none;">import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.cross_validation import cross_val_score
+
+hill_valley_data = pd.read_csv('https://raw.githubusercontent.com/rhiever/Data-Analysis-and-Machine-Learning-Projects/master/tpot-demo/Hill_Valley_without_noise.csv.gz', sep='\t', compression='gzip')
+
+cv_scores = cross_val_score(RandomForestClassifier(n_estimators=100, n_jobs=-1),
+                            X=hill_valley_data.drop('class', axis=1).values,
+                            y=hill_valley_data.loc[:, 'class'].values,
+                            cv=10)
+
+print(cv_scores)
+
+[ 0.64754098  0.64754098  0.57024793  0.61983471  0.62809917  0.61983471
+  0.70247934  0.59504132  0.49586777  0.65289256]
+
+print(np.mean(cv_scores))
+
+0.617937948787
+</pre>
+<p>Then we’re going to find that the random forest isn’t well-suited for signal processing tasks like this one when it achieves a disappointing average of 61.8% cross-validation accuracy.</p>
+<p>What if we tried a different model, for example a logistic regression?</p>
+<div class="dp-highlighter nogutter"><div class="bar"><div class="tools"><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;ViewSource&#39;,this);return false;">view plain</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;CopyToClipboard&#39;,this);return false;">copy to clipboard</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;PrintSource&#39;,this);return false;">print</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;About&#39;,this);return false;">?</a></div></div><ol start="1" class="dp-py"><li class="alt"><span><span>cv_scores&nbsp;=&nbsp;cross_val_score(LogisticRegression(),&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X=hill_valley_data.drop(<span class="string">'class'</span><span>,&nbsp;axis=</span><span class="number">1</span><span>).values,&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y=hill_valley_data.loc[:,&nbsp;<span class="string">'class'</span><span>].values,&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cv=<span class="number">10</span><span>)&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span><span class="keyword">print</span><span>(cv_scores)&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>[&nbsp;<span class="number">1.</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">1.</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">1.</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">0.99173554</span><span>&nbsp;&nbsp;</span><span class="number">1.</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">0.98347107</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;<span class="number">1.</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">0.99173554</span><span>&nbsp;&nbsp;</span><span class="number">1.</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">1.</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span><span class="keyword">print</span><span>(np.mean(cv_scores))&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span><span class="number">0.996694214876</span><span>&nbsp;&nbsp;</span></span></li></ol></div><pre name="code" class="python:nogutter" style="display: none;">cv_scores = cross_val_score(LogisticRegression(),
+                            X=hill_valley_data.drop('class', axis=1).values,
+                            y=hill_valley_data.loc[:, 'class'].values,
+                            cv=10)
+
+print(cv_scores)
+
+[ 1.          1.          1.          0.99173554  1.          0.98347107
+  1.          0.99173554  1.          1.        ]
+
+print(np.mean(cv_scores))
+
+0.996694214876
+</pre>
+<p>We’ll find that a logistic regression is well-suited for this signal processing task—in fact, it easily achieves near-100% cross-validation accuracy without any hyperparameter tuning at all.</p>
+<p><strong>Always try out many different machine learning models</strong> for every machine learning task that you work on. Trying out—and tuning—different machine learning models is another tedious yet vitally important step of machine learning pipeline design.</p>
+<h3>Feature preprocessing is important</h3>
+<p>As we’ve seen in the previous two examples, machine learning model performance is also affected by how the features are represented. <em>Feature preprocessing</em> is a step in machine learning pipelines where we reshape the features in a manner that makes the data set easier for models to classify.</p>
+<p>For example, if we’re working on a harder version of the “hill” vs. “valley” signal processing problem with noise:</p>
+<p><a href="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/tpot-demo-hill-valley-noise.png" rel="attachment wp-att-8091"><img src="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/tpot-demo-hill-valley-noise.png" alt="tpot-demo-hill-valley-noise" width="600" class="aligncenter size-full wp-image-8091" srcset="http://www.randalolson.com/wp-content/uploads/tpot-demo-hill-valley-noise.png 885w, http://www.randalolson.com/wp-content/uploads/tpot-demo-hill-valley-noise-150x150.png 150w, http://www.randalolson.com/wp-content/uploads/tpot-demo-hill-valley-noise-300x300.png 300w, http://www.randalolson.com/wp-content/uploads/tpot-demo-hill-valley-noise-768x768.png 768w, http://www.randalolson.com/wp-content/uploads/tpot-demo-hill-valley-noise-100x100.png 100w, http://www.randalolson.com/wp-content/uploads/tpot-demo-hill-valley-noise-200x200.png 200w, http://www.randalolson.com/wp-content/uploads/tpot-demo-hill-valley-noise-450x450.png 450w, http://www.randalolson.com/wp-content/uploads/tpot-demo-hill-valley-noise-600x600.png 600w" sizes="(max-width: 885px) 100vw, 885px"></a></p>
+<p>And we apply a “tuned” random forest to the problem:</p>
+<div class="dp-highlighter nogutter"><div class="bar"><div class="tools"><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;ViewSource&#39;,this);return false;">view plain</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;CopyToClipboard&#39;,this);return false;">copy to clipboard</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;PrintSource&#39;,this);return false;">print</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;About&#39;,this);return false;">?</a></div></div><ol start="1" class="dp-py"><li class="alt"><span><span class="keyword">import</span><span>&nbsp;pandas&nbsp;as&nbsp;pd&nbsp;&nbsp;</span></span></li><li class=""><span><span class="keyword">import</span><span>&nbsp;numpy&nbsp;as&nbsp;np&nbsp;&nbsp;</span></span></li><li class="alt"><span><span class="keyword">from</span><span>&nbsp;sklearn.ensemble&nbsp;</span><span class="keyword">import</span><span>&nbsp;RandomForestClassifier&nbsp;&nbsp;</span></span></li><li class=""><span><span class="keyword">from</span><span>&nbsp;sklearn.decomposition&nbsp;</span><span class="keyword">import</span><span>&nbsp;PCA&nbsp;&nbsp;</span></span></li><li class="alt"><span><span class="keyword">from</span><span>&nbsp;sklearn.pipeline&nbsp;</span><span class="keyword">import</span><span>&nbsp;make_pipeline&nbsp;&nbsp;</span></span></li><li class=""><span><span class="keyword">from</span><span>&nbsp;sklearn.cross_validation&nbsp;</span><span class="keyword">import</span><span>&nbsp;cross_val_score&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>hill_valley_noisy_data&nbsp;=&nbsp;pd.read_csv(<span class="string">'https://raw.githubusercontent.com/rhiever/Data-Analysis-and-Machine-Learning-Projects/master/tpot-demo/Hill_Valley_with_noise.csv.gz'</span><span>,&nbsp;sep=</span><span class="string">'\t'</span><span>,&nbsp;compression=</span><span class="string">'gzip'</span><span>)&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>cv_scores&nbsp;=&nbsp;cross_val_score(RandomForestClassifier(n_estimators=<span class="number">100</span><span>,&nbsp;n_jobs=-</span><span class="number">1</span><span>),&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X=hill_valley_noisy_data.drop(<span class="string">'class'</span><span>,&nbsp;axis=</span><span class="number">1</span><span>).values,&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y=hill_valley_noisy_data.loc[:,&nbsp;<span class="string">'class'</span><span>].values,&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cv=<span class="number">10</span><span>)&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span><span class="keyword">print</span><span>(cv_scores)&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span>[&nbsp;<span class="number">0.52459016</span><span>&nbsp;&nbsp;</span><span class="number">0.51639344</span><span>&nbsp;&nbsp;</span><span class="number">0.57377049</span><span>&nbsp;&nbsp;</span><span class="number">0.6147541</span><span>&nbsp;&nbsp;&nbsp;</span><span class="number">0.6557377</span><span>&nbsp;&nbsp;&nbsp;</span><span class="number">0.56557377</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;<span class="number">0.575</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">0.575</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">0.60833333</span><span>&nbsp;&nbsp;</span><span class="number">0.575</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span><span class="keyword">print</span><span>(np.mean(cv_scores))&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span><span class="number">0.578415300546</span><span>&nbsp;&nbsp;</span></span></li></ol></div><pre name="code" class="python:nogutter" style="display: none;">import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.decomposition import PCA
+from sklearn.pipeline import make_pipeline
+from sklearn.cross_validation import cross_val_score
+
+hill_valley_noisy_data = pd.read_csv('https://raw.githubusercontent.com/rhiever/Data-Analysis-and-Machine-Learning-Projects/master/tpot-demo/Hill_Valley_with_noise.csv.gz', sep='\t', compression='gzip')
+
+cv_scores = cross_val_score(RandomForestClassifier(n_estimators=100, n_jobs=-1),
+                            X=hill_valley_noisy_data.drop('class', axis=1).values,
+                            y=hill_valley_noisy_data.loc[:, 'class'].values,
+                            cv=10)
+
+print(cv_scores)
+
+[ 0.52459016  0.51639344  0.57377049  0.6147541   0.6557377   0.56557377
+  0.575       0.575       0.60833333  0.575     ]
+
+print(np.mean(cv_scores))
+
+0.578415300546
+</pre>
+<p>We’ll again find that the “tuned” random forest averages a disappointing 57.8% cross-validation accuracy.</p>
+<p>However, if we preprocess the features—denoising them via Principal Component Analysis (PCA), for example:</p>
+<div class="dp-highlighter nogutter"><div class="bar"><div class="tools"><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;ViewSource&#39;,this);return false;">view plain</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;CopyToClipboard&#39;,this);return false;">copy to clipboard</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;PrintSource&#39;,this);return false;">print</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;About&#39;,this);return false;">?</a></div></div><ol start="1" class="dp-py"><li class="alt"><span><span>cv_scores&nbsp;=&nbsp;cross_val_score(make_pipeline(PCA(n_components=</span><span class="number">10</span><span>),&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RandomForestClassifier(n_estimators=<span class="number">100</span><span>,&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n_jobs=-<span class="number">1</span><span>)),&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X=hill_valley_noisy_data.drop(<span class="string">'class'</span><span>,&nbsp;axis=</span><span class="number">1</span><span>).values,&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y=hill_valley_noisy_data.loc[:,&nbsp;<span class="string">'class'</span><span>].values,&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cv=<span class="number">10</span><span>)&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span><span class="keyword">print</span><span>(cv_scores)&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>[&nbsp;<span class="number">0.96721311</span><span>&nbsp;&nbsp;</span><span class="number">0.98360656</span><span>&nbsp;&nbsp;</span><span class="number">0.8852459</span><span>&nbsp;&nbsp;&nbsp;</span><span class="number">0.96721311</span><span>&nbsp;&nbsp;</span><span class="number">0.95081967</span><span>&nbsp;&nbsp;</span><span class="number">0.93442623</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;<span class="number">0.91666667</span><span>&nbsp;&nbsp;</span><span class="number">0.89166667</span><span>&nbsp;&nbsp;</span><span class="number">0.94166667</span><span>&nbsp;&nbsp;</span><span class="number">0.95833333</span><span>]&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span><span class="keyword">print</span><span>(np.mean(cv_scores))&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span><span class="number">0.93968579235</span><span>&nbsp;&nbsp;</span></span></li></ol></div><pre name="code" class="python:nogutter" style="display: none;">cv_scores = cross_val_score(make_pipeline(PCA(n_components=10),
+                                          RandomForestClassifier(n_estimators=100,
+                                                                 n_jobs=-1)),
+                            X=hill_valley_noisy_data.drop('class', axis=1).values,
+                            y=hill_valley_noisy_data.loc[:, 'class'].values,
+                            cv=10)
+
+print(cv_scores)
+
+[ 0.96721311  0.98360656  0.8852459   0.96721311  0.95081967  0.93442623
+  0.91666667  0.89166667  0.94166667  0.95833333]
+
+print(np.mean(cv_scores))
+
+0.93968579235
+</pre>
+<p>We’ll find that the random forest now achieves an average of 94% cross-validation accuracy by applying a simple feature preprocessing step.</p>
+<p><strong>Always explore numerous feature representations for your data.</strong> Machines learn differently from humans, and a feature representation that makes sense to us may not make sense to the machine.</p>
+<h3>Automating data science with TPOT</h3>
+<p>To summarize what we’ve learned so far about effective machine learning system design, we should:</p>
+<ol>
+<li>Always tune the hyperparameters for our models</li>
+<li>Always try out many different models</li>
+<li>Always explore numerous feature representations for our data</li>
+</ol>
+<p>We must also consider the following:</p>
+<ol>
+<li>There are thousands of possible hyperparameter configurations for every model</li>
+<li>There are dozens of popular machine learning models</li>
+<li>There are dozens of popular feature preprocessing methods</li>
+</ol>
+<p>This is why it can be so tedious to design effective machine learning systems. This is also why my collaborators and I created <a href="http://github.com/rhiever/tpot" onclick="_gaq.push([&#39;_trackEvent&#39;, &#39;outbound-article&#39;, &#39;http://github.com/rhiever/tpot&#39;, &#39;TPOT&#39;]);">TPOT</a>, an open source Python tool that intelligently automates the entire process.</p>
+<p>If your data set is <a href="http://github.com/amueller/scipy_2015_sklearn_tutorial/blob/master/notebooks/01.3%20Data%20Representation%20for%20Machine%20Learning.ipynb" onclick="_gaq.push([&#39;_trackEvent&#39;, &#39;outbound-article&#39;, &#39;http://github.com/amueller/scipy_2015_sklearn_tutorial/blob/master/notebooks/01.3%20Data%20Representation%20for%20Machine%20Learning.ipynb&#39;, &#39;compatible with scikit-learn&#39;]);">compatible with scikit-learn</a>, then TPOT will automatically optimize a series of feature preprocessors and models that maximize the cross-validation accuracy on the data set. For example, if we want TPOT to solve the noisy “hill” vs. “valley” classification problem:</p>
+<p>(Before running the code below, make sure to <a href="http://rhiever.github.io/tpot/installing/" onclick="_gaq.push([&#39;_trackEvent&#39;, &#39;outbound-article&#39;, &#39;http://rhiever.github.io/tpot/installing/&#39;, &#39;install TPOT first&#39;]);">install TPOT first</a>.)</p>
+<div class="dp-highlighter nogutter"><div class="bar"><div class="tools"><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;ViewSource&#39;,this);return false;">view plain</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;CopyToClipboard&#39;,this);return false;">copy to clipboard</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;PrintSource&#39;,this);return false;">print</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;About&#39;,this);return false;">?</a></div></div><ol start="1" class="dp-py"><li class="alt"><span><span class="keyword">import</span><span>&nbsp;pandas&nbsp;as&nbsp;pd&nbsp;&nbsp;</span></span></li><li class=""><span><span class="keyword">from</span><span>&nbsp;sklearn.cross_validation&nbsp;</span><span class="keyword">import</span><span>&nbsp;train_test_split&nbsp;&nbsp;</span></span></li><li class="alt"><span><span class="keyword">from</span><span>&nbsp;tpot&nbsp;</span><span class="keyword">import</span><span>&nbsp;TPOT&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span>hill_valley_noisy_data&nbsp;=&nbsp;pd.read_csv(<span class="string">'https://raw.githubusercontent.com/rhiever/Data-Analysis-and-Machine-Learning-Projects/master/tpot-demo/Hill_Valley_with_noise.csv.gz'</span><span>,&nbsp;sep=</span><span class="string">'\t'</span><span>,&nbsp;compression=</span><span class="string">'gzip'</span><span>)&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span>X&nbsp;=&nbsp;hill_valley_noisy_data.drop(<span class="string">'class'</span><span>,&nbsp;axis=</span><span class="number">1</span><span>).values&nbsp;&nbsp;</span></span></li><li class=""><span>y&nbsp;=&nbsp;hill_valley_noisy_data.loc[:,&nbsp;<span class="string">'class'</span><span>].values&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>X_train,&nbsp;X_test,&nbsp;y_train,&nbsp;y_test&nbsp;=&nbsp;train_test_split(X,&nbsp;y,&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;train_size=<span class="number">0.75</span><span>,&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test_size=<span class="number">0.25</span><span>)&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>my_tpot&nbsp;=&nbsp;TPOT(generations=<span class="number">10</span><span>)&nbsp;&nbsp;</span></span></li><li class="alt"><span>my_tpot.fit(X_train,&nbsp;y_train)&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span><span class="keyword">print</span><span>(my_tpot.score(X_test,&nbsp;y_test))&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span><span class="number">0.960352039038</span><span>&nbsp;&nbsp;</span></span></li></ol></div><pre name="code" class="python:nogutter" style="display: none;">import pandas as pd
+from sklearn.cross_validation import train_test_split
+from tpot import TPOT
+
+hill_valley_noisy_data = pd.read_csv('https://raw.githubusercontent.com/rhiever/Data-Analysis-and-Machine-Learning-Projects/master/tpot-demo/Hill_Valley_with_noise.csv.gz', sep='\t', compression='gzip')
+
+X = hill_valley_noisy_data.drop('class', axis=1).values
+y = hill_valley_noisy_data.loc[:, 'class'].values
+
+X_train, X_test, y_train, y_test = train_test_split(X, y,
+                                                    train_size=0.75,
+                                                    test_size=0.25)
+
+my_tpot = TPOT(generations=10)
+my_tpot.fit(X_train, y_train)
+
+print(my_tpot.score(X_test, y_test))
+
+0.960352039038
+</pre>
+<p>Depending on the machine you’re running it on, 10 TPOT generations should take about 5 minutes to complete. During this time, you’re free to browse Hacker News, refill your cup of coffee, or admire the beautiful weather outside. In the meantime, TPOT will handle all of the work for you.</p>
+<p>After 5 minutes of optimization, TPOT will discover a pipeline that achieves 96% cross-validation accuracy on the noisy “hill” vs. “valley” problem—better than the hand-designed pipeline we created above!</p>
+<p>If we want to see what pipeline TPOT created, TPOT can export the corresponding scikit-learn code for us with the <code>export()</code> command:</p>
+<div class="dp-highlighter nogutter"><div class="bar"><div class="tools"><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;ViewSource&#39;,this);return false;">view plain</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;CopyToClipboard&#39;,this);return false;">copy to clipboard</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;PrintSource&#39;,this);return false;">print</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;About&#39;,this);return false;">?</a></div></div><ol start="1" class="dp-py"><li class="alt"><span><span>my_tpot.export(</span><span class="string">'exported_pipeline.py'</span><span>)&nbsp;&nbsp;</span></span></li></ol></div><pre name="code" class="python:nogutter" style="display: none;">my_tpot.export('exported_pipeline.py')
+</pre>
+<p>which will look something like:</p>
+<div class="dp-highlighter nogutter"><div class="bar"><div class="tools"><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;ViewSource&#39;,this);return false;">view plain</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;CopyToClipboard&#39;,this);return false;">copy to clipboard</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;PrintSource&#39;,this);return false;">print</a><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" onclick="dp.sh.Toolbar.Command(&#39;About&#39;,this);return false;">?</a></div></div><ol start="1" class="dp-py"><li class="alt"><span><span class="keyword">import</span><span>&nbsp;pandas&nbsp;as&nbsp;pd&nbsp;&nbsp;</span></span></li><li class=""><span><span class="keyword">from</span><span>&nbsp;sklearn.cross_validation&nbsp;</span><span class="keyword">import</span><span>&nbsp;train_test_split&nbsp;&nbsp;</span></span></li><li class="alt"><span><span class="keyword">from</span><span>&nbsp;sklearn.linear_model&nbsp;</span><span class="keyword">import</span><span>&nbsp;LogisticRegression&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span><span class="comment">#&nbsp;NOTE:&nbsp;Make&nbsp;sure&nbsp;that&nbsp;the&nbsp;class&nbsp;is&nbsp;labeled&nbsp;'class'&nbsp;in&nbsp;the&nbsp;data&nbsp;file</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>tpot_data&nbsp;=&nbsp;pd.read_csv(<span class="string">'https://raw.githubusercontent.com/rhiever/Data-Analysis-and-Machine-Learning-Projects/master/tpot-demo/Hill_Valley_with_noise.csv.gz'</span><span>,&nbsp;sep=</span><span class="string">'\t'</span><span>,&nbsp;compression=</span><span class="string">'gzip'</span><span>)&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>training_indices,&nbsp;testing_indices&nbsp;=&nbsp;train_test_split(tpot_data.index,&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stratify=tpot_data[<span class="string">'class'</span><span>].values,&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;train_size=<span class="number">0.75</span><span>,&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test_size=<span class="number">0.25</span><span>)&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span>result1&nbsp;=&nbsp;tpot_data.copy()&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span><span class="comment">#&nbsp;Perform&nbsp;classification&nbsp;with&nbsp;a&nbsp;logistic&nbsp;regression&nbsp;classifier</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>lrc1&nbsp;=&nbsp;LogisticRegression(C=<span class="number">0.0001</span><span>)&nbsp;&nbsp;</span></span></li><li class="alt"><span>lrc1.fit(result1.loc[training_indices].drop(<span class="string">'class'</span><span>,&nbsp;axis=</span><span class="number">1</span><span>).values,&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result1.loc[training_indices,&nbsp;<span class="string">'class'</span><span>].values)&nbsp;&nbsp;</span></span></li><li class="alt"><span>result1[<span class="string">'lrc1-classification'</span><span>]&nbsp;=&nbsp;lrc1.predict(result1.drop(</span><span class="string">'class'</span><span>,&nbsp;axis=</span><span class="number">1</span><span>).values)&nbsp;&nbsp;</span></span></li></ol></div><pre name="code" class="python:nogutter" style="display: none;">import pandas as pd
+from sklearn.cross_validation import train_test_split
+from sklearn.linear_model import LogisticRegression
+
+# NOTE: Make sure that the class is labeled 'class' in the data file
+tpot_data = pd.read_csv('https://raw.githubusercontent.com/rhiever/Data-Analysis-and-Machine-Learning-Projects/master/tpot-demo/Hill_Valley_with_noise.csv.gz', sep='\t', compression='gzip')
+
+training_indices, testing_indices = train_test_split(tpot_data.index,
+                                                     stratify=tpot_data['class'].values,
+                                                     train_size=0.75,
+                                                     test_size=0.25)
+
+result1 = tpot_data.copy()
+
+# Perform classification with a logistic regression classifier
+lrc1 = LogisticRegression(C=0.0001)
+lrc1.fit(result1.loc[training_indices].drop('class', axis=1).values,
+         result1.loc[training_indices, 'class'].values)
+result1['lrc1-classification'] = lrc1.predict(result1.drop('class', axis=1).values)
+</pre>
+<p>and shows us that a tuned logistic regression is probably the best model for this problem.</p>
+<p>We’ve designed TPOT to be an end-to-end automated machine learning system, which can act as a drop-in replacement for any scikit-learn model that you’re currently using in your workflow.</p>
+<p>If TPOT sounds like the tool you’ve been looking for, here’s a few links that you may find useful:</p>
+<ul>
+<li><a href="http://github.com/rhiever/tpot" onclick="_gaq.push([&#39;_trackEvent&#39;, &#39;outbound-article&#39;, &#39;http://github.com/rhiever/tpot&#39;, &#39;TPOT repository on GitHub&#39;]);">TPOT repository on GitHub</a></li>
+<li><a href="http://rhiever.github.io/tpot/" onclick="_gaq.push([&#39;_trackEvent&#39;, &#39;outbound-article&#39;, &#39;http://rhiever.github.io/tpot/&#39;, &#39;TPOT documentation&#39;]);">TPOT documentation</a></li>
+<li><a href="http://rhiever.github.io/tpot/installing/" onclick="_gaq.push([&#39;_trackEvent&#39;, &#39;outbound-article&#39;, &#39;http://rhiever.github.io/tpot/installing/&#39;, &#39;TPOT installation instructions&#39;]);">TPOT installation instructions</a></li>
+<li><a href="http://rhiever.github.io/tpot/examples/MNIST_Example/" onclick="_gaq.push([&#39;_trackEvent&#39;, &#39;outbound-article&#39;, &#39;http://rhiever.github.io/tpot/examples/MNIST_Example/&#39;, &#39;TPOT example code&#39;]);">TPOT example code</a></li>
+</ul>
+<p>And as always, please feel free to <a href="http://www.randalolson.com/contact/">get in touch</a>.</p>
+<hr>
+<p>You can find all of the code used in this article on <a href="https://github.com/rhiever/Data-Analysis-and-Machine-Learning-Projects/blob/master/tpot-demo/TPOT%20-%20A%20Python%20tool%20for%20automating%20data%20science.ipynb" onclick="_gaq.push([&#39;_trackEvent&#39;, &#39;outbound-article&#39;, &#39;https://github.com/rhiever/Data-Analysis-and-Machine-Learning-Projects/blob/master/tpot-demo/TPOT%20-%20A%20Python%20tool%20for%20automating%20data%20science.ipynb&#39;, &#39;my GitHub&#39;]);">my GitHub</a>. Enjoy!</p><div class="sharedaddy sd-sharing-enabled"><div class="robots-nocontent sd-block sd-social sd-social-icon-text sd-sharing"><h3 class="sd-title">Share this:</h3><div class="sd-content"><ul><li class="share-facebook"><a rel="nofollow" data-shared="sharing-facebook-8090" class="share-facebook sd-button share-icon" href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/?share=facebook" target="_blank" title="Click to share on Facebook"><span>Facebook</span></a></li><li class="share-twitter"><a rel="nofollow" data-shared="sharing-twitter-8090" class="share-twitter sd-button share-icon" href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/?share=twitter" target="_blank" title="Click to share on Twitter"><span>Twitter</span></a></li><li class="share-reddit"><a rel="nofollow" data-shared="" class="share-reddit sd-button share-icon" href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/?share=reddit" target="_blank" title="Click to share on Reddit"><span>Reddit</span></a></li><li class="share-linkedin"><a rel="nofollow" data-shared="sharing-linkedin-8090" class="share-linkedin sd-button share-icon" href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/?share=linkedin" target="_blank" title="Click to share on LinkedIn"><span>LinkedIn</span></a></li><li class="share-google-plus-1"><a rel="nofollow" data-shared="sharing-google-8090" class="share-google-plus-1 sd-button share-icon" href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/?share=google-plus-1" target="_blank" title="Click to share on Google+"><span>Google</span></a></li><li class="share-pinterest"><a rel="nofollow" data-shared="sharing-pinterest-8090" class="share-pinterest sd-button share-icon" href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/?share=pinterest" target="_blank" title="Click to share on Pinterest"><span>Pinterest</span></a></li><li class="share-tumblr"><a rel="nofollow" data-shared="" class="share-tumblr sd-button share-icon" href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/?share=tumblr" target="_blank" title="Click to share on Tumblr"><span>Tumblr</span></a></li><li class="share-email"><a rel="nofollow" data-shared="" class="share-email sd-button share-icon" href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/?share=email" target="_blank" title="Click to email this to a friend"><span>Email</span></a></li><li class="share-print"><a rel="nofollow" data-shared="" class="share-print sd-button share-icon" href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#print" target="_blank" title="Click to print"><span>Print</span></a></li><li class="share-end"></li></ul></div></div></div>
+<div id="author-meta">
+<img alt="" src="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/bc264e8b1145c5291892c01cc9174db7" srcset="http://2.gravatar.com/avatar/bc264e8b1145c5291892c01cc9174db7?s=160&amp;r=pg 2x" class="avatar avatar-80 photo grav-hashed grav-hijack" height="80" width="80" id="grav-bc264e8b1145c5291892c01cc9174db7-0"> <div class="about-author">About <a href="http://www.randalolson.com/author/rhiever/" title="Posts by Randy Olson" rel="author">Randy Olson</a></div>
+<p>Dr. Randy Olson is a postdoctoral researcher at the University of Pennsylvania. As a member of Prof. Jason H. Moore's research lab, he studies biologically-inspired AI and its applications to biomedical problems.</p>
+</div> 
+</div> 
+<div class="navigation">
+<div class="previous">‹ <a href="http://www.randalolson.com/2016/05/08/why-did-so-many-japanese-families-avoid-having-children-in-1966/" rel="prev">Why did so many Japanese families avoid having children in 1966?</a></div>
+<div class="next"><a href="http://www.randalolson.com/2016/05/25/why-is-reddit-replacing-imgur/" rel="next">Why is Reddit replacing Imgur?</a> ›</div>
+</div> 
+<div class="post-data">
+Posted in <a href="http://www.randalolson.com/category/machine-learning/">machine learning</a>, <a href="http://www.randalolson.com/category/python/">python</a>, <a href="http://www.randalolson.com/category/research/">research</a> Tagged with: <a href="http://www.randalolson.com/tag/automation/" rel="tag">automation</a>, <a href="http://www.randalolson.com/tag/data-science/" rel="tag">data science</a>, <a href="http://www.randalolson.com/tag/machine-learning/" rel="tag">machine learning</a><br> </div> 
+<div class="post-edit"></div>
+</div> 
+</div> 
+<div id="widgets" class="grid col-300 fit">
+<div id="text-2" class="widget-wrapper widget_text"><div class="widget-title"><h3>About this blog</h3></div> <div class="textwidget"><p>This blog is my labor of love, and I've spent hundreds of hours working on the projects that you'll read about here. Generally, I write about data visualization and machine learning, and sometimes explore out-of-the-box projects at the intersection of the two. I hope you enjoy my projects as much as I have.</p>
+<p>If you would like to use one of my graphs on your website or in a publication, please feel free to do so with appropriate attribution, but I would appreciate it if you <a href="http://www.randalolson.com/contact/">email me</a> first to let me know.</p>
+</div>
+</div><div id="text-4" class="widget-wrapper widget_text"> <div class="textwidget"><center><a href="http://app.jobvite.com/CompanyJobs/Careers.aspx?nl=1&amp;k=Job&amp;j=odiK2fw1&amp;s=website" onclick="_gaq.push([&#39;_trackEvent&#39;, &#39;outbound-widget&#39;, &#39;http://app.jobvite.com/CompanyJobs/Careers.aspx?nl=1&amp;k=Job&amp;j=odiK2fw1&amp;s=website&#39;, &#39;&#39;]);"><img src="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/jobs-ad3.jpg" width="200" height="600"></a></center></div>
+</div> <div id="recent-posts-3" class="widget-wrapper widget_recent_entries"> <div class="widget-title"><h3>Recent Posts</h3></div> <ul>
+<li>
+<a href="http://www.randalolson.com/2016/05/31/how-long-does-the-average-man-last-in-bed/">How long does the average man last in bed?</a>
+</li>
+<li>
+<a href="http://www.randalolson.com/2016/05/25/why-is-reddit-replacing-imgur/">Why is Reddit replacing Imgur?</a>
+</li>
+<li>
+<a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/">TPOT: A Python tool for automating data science</a>
+</li>
+<li>
+<a href="http://www.randalolson.com/2016/05/08/why-did-so-many-japanese-families-avoid-having-children-in-1966/">Why did so many Japanese families avoid having children in 1966?</a>
+</li>
+<li>
+<a href="http://www.randalolson.com/2016/04/04/spurious-extrapolations-novel-and-unique-research-abstracts/">Spurious Extrapolations: Novel and unique research abstracts</a>
+</li>
+</ul>
+</div> <div id="search-4" class="widget-wrapper widget_search"><div class="widget-title"><h3>Search</h3></div><form method="get" id="searchform" action="http://www.randalolson.com/">
+<label class="screen-reader-text" for="s">Search for:</label>
+<input type="text" class="field" name="s" id="s" placeholder="search here …">
+<input type="submit" class="submit" name="submit" id="searchsubmit" value="Go">
+</form></div><div id="archives-2" class="widget-wrapper widget_archive"><div class="widget-title"><h3>Archives</h3></div> <label class="screen-reader-text" for="archives-dropdown-2">Archives</label>
+<select id="archives-dropdown-2" name="archive-dropdown" onchange="document.location.href=this.options[this.selectedIndex].value;">
+<option value="">Select Month</option>
+<option value="http://www.randalolson.com/2016/05/"> May 2016 &nbsp;(4)</option>
+<option value="http://www.randalolson.com/2016/04/"> April 2016 &nbsp;(1)</option>
+<option value="http://www.randalolson.com/2016/03/"> March 2016 &nbsp;(6)</option>
+<option value="http://www.randalolson.com/2016/02/"> February 2016 &nbsp;(1)</option>
+<option value="http://www.randalolson.com/2015/11/"> November 2015 &nbsp;(1)</option>
+<option value="http://www.randalolson.com/2015/09/"> September 2015 &nbsp;(1)</option>
+<option value="http://www.randalolson.com/2015/08/"> August 2015 &nbsp;(6)</option>
+<option value="http://www.randalolson.com/2015/07/"> July 2015 &nbsp;(2)</option>
+<option value="http://www.randalolson.com/2015/06/"> June 2015 &nbsp;(1)</option>
+<option value="http://www.randalolson.com/2015/04/"> April 2015 &nbsp;(1)</option>
+<option value="http://www.randalolson.com/2015/03/"> March 2015 &nbsp;(8)</option>
+<option value="http://www.randalolson.com/2015/02/"> February 2015 &nbsp;(1)</option>
+<option value="http://www.randalolson.com/2015/01/"> January 2015 &nbsp;(4)</option>
+<option value="http://www.randalolson.com/2014/12/"> December 2014 &nbsp;(6)</option>
+<option value="http://www.randalolson.com/2014/11/"> November 2014 &nbsp;(6)</option>
+<option value="http://www.randalolson.com/2014/10/"> October 2014 &nbsp;(7)</option>
+<option value="http://www.randalolson.com/2014/09/"> September 2014 &nbsp;(4)</option>
+<option value="http://www.randalolson.com/2014/08/"> August 2014 &nbsp;(3)</option>
+<option value="http://www.randalolson.com/2014/06/"> June 2014 &nbsp;(11)</option>
+<option value="http://www.randalolson.com/2014/05/"> May 2014 &nbsp;(12)</option>
+<option value="http://www.randalolson.com/2014/04/"> April 2014 &nbsp;(5)</option>
+<option value="http://www.randalolson.com/2014/03/"> March 2014 &nbsp;(5)</option>
+<option value="http://www.randalolson.com/2014/02/"> February 2014 &nbsp;(1)</option>
+<option value="http://www.randalolson.com/2014/01/"> January 2014 &nbsp;(7)</option>
+<option value="http://www.randalolson.com/2013/12/"> December 2013 &nbsp;(5)</option>
+<option value="http://www.randalolson.com/2013/11/"> November 2013 &nbsp;(6)</option>
+<option value="http://www.randalolson.com/2013/07/"> July 2013 &nbsp;(3)</option>
+<option value="http://www.randalolson.com/2013/06/"> June 2013 &nbsp;(1)</option>
+<option value="http://www.randalolson.com/2013/05/"> May 2013 &nbsp;(1)</option>
+<option value="http://www.randalolson.com/2013/04/"> April 2013 &nbsp;(1)</option>
+<option value="http://www.randalolson.com/2013/03/"> March 2013 &nbsp;(6)</option>
+<option value="http://www.randalolson.com/2013/02/"> February 2013 &nbsp;(1)</option>
+<option value="http://www.randalolson.com/2013/01/"> January 2013 &nbsp;(2)</option>
+<option value="http://www.randalolson.com/2012/08/"> August 2012 &nbsp;(3)</option>
+<option value="http://www.randalolson.com/2012/06/"> June 2012 &nbsp;(2)</option>
+<option value="http://www.randalolson.com/2012/05/"> May 2012 &nbsp;(2)</option>
+</select>
+</div><div id="tag_cloud-2" class="widget-wrapper widget_tag_cloud"><div class="widget-title"><h3>Common Topics</h3></div><div class="tagcloud"><a href="http://www.randalolson.com/tag/american-dream/" class="tag-link-167 tag-link-position-1" title="3 topics" style="font-size: 8pt;">american dream</a>
+<a href="http://www.randalolson.com/tag/analysis/" class="tag-link-395 tag-link-position-2" title="3 topics" style="font-size: 8pt;">analysis</a>
+<a href="http://www.randalolson.com/tag/artificial-intelligence/" class="tag-link-22 tag-link-position-3" title="4 topics" style="font-size: 9.7948717948718pt;">artificial intelligence</a>
+<a href="http://www.randalolson.com/tag/baby-names/" class="tag-link-336 tag-link-position-4" title="4 topics" style="font-size: 9.7948717948718pt;">baby names</a>
+<a href="http://www.randalolson.com/tag/college-major/" class="tag-link-249 tag-link-position-5" title="4 topics" style="font-size: 9.7948717948718pt;">college major</a>
+<a href="http://www.randalolson.com/tag/data-visualization/" class="tag-link-396 tag-link-position-6" title="11 topics" style="font-size: 16.615384615385pt;">data visualization</a>
+<a href="http://www.randalolson.com/tag/dating/" class="tag-link-298 tag-link-position-7" title="4 topics" style="font-size: 9.7948717948718pt;">dating</a>
+<a href="http://www.randalolson.com/tag/deadly/" class="tag-link-120 tag-link-position-8" title="3 topics" style="font-size: 8pt;">deadly</a>
+<a href="http://www.randalolson.com/tag/decision-making/" class="tag-link-75 tag-link-position-9" title="3 topics" style="font-size: 8pt;">decision making</a>
+<a href="http://www.randalolson.com/tag/education/" class="tag-link-169 tag-link-position-10" title="5 topics" style="font-size: 11.230769230769pt;">education</a>
+<a href="http://www.randalolson.com/tag/evolution/" class="tag-link-40 tag-link-position-11" title="7 topics" style="font-size: 13.384615384615pt;">evolution</a>
+<a href="http://www.randalolson.com/tag/film/" class="tag-link-119 tag-link-position-12" title="3 topics" style="font-size: 8pt;">film</a>
+<a href="http://www.randalolson.com/tag/films/" class="tag-link-117 tag-link-position-13" title="4 topics" style="font-size: 9.7948717948718pt;">films</a>
+<a href="http://www.randalolson.com/tag/front-page/" class="tag-link-54 tag-link-position-14" title="10 topics" style="font-size: 15.897435897436pt;">front page</a>
+<a href="http://www.randalolson.com/tag/genetic-algorithm/" class="tag-link-351 tag-link-position-15" title="6 topics" style="font-size: 12.487179487179pt;">genetic algorithm</a>
+<a href="http://www.randalolson.com/tag/hotness/" class="tag-link-197 tag-link-position-16" title="4 topics" style="font-size: 9.7948717948718pt;">hotness</a>
+<a href="http://www.randalolson.com/tag/ipython/" class="tag-link-387 tag-link-position-17" title="6 topics" style="font-size: 12.487179487179pt;">ipython</a>
+<a href="http://www.randalolson.com/tag/kill-counts/" class="tag-link-114 tag-link-position-18" title="6 topics" style="font-size: 12.487179487179pt;">kill counts</a>
+<a href="http://www.randalolson.com/tag/machine-learning/" class="tag-link-350 tag-link-position-19" title="10 topics" style="font-size: 15.897435897436pt;">machine learning</a>
+<a href="http://www.randalolson.com/tag/movies/" class="tag-link-116 tag-link-position-20" title="11 topics" style="font-size: 16.615384615385pt;">movies</a>
+<a href="http://www.randalolson.com/tag/notebook/" class="tag-link-8 tag-link-position-21" title="5 topics" style="font-size: 11.230769230769pt;">notebook</a>
+<a href="http://www.randalolson.com/tag/open-science/" class="tag-link-49 tag-link-position-22" title="4 topics" style="font-size: 9.7948717948718pt;">open science</a>
+<a href="http://www.randalolson.com/tag/optimization/" class="tag-link-353 tag-link-position-23" title="6 topics" style="font-size: 12.487179487179pt;">optimization</a>
+<a href="http://www.randalolson.com/tag/outreach/" class="tag-link-393 tag-link-position-24" title="3 topics" style="font-size: 8pt;">outreach</a>
+<a href="http://www.randalolson.com/tag/pandas/" class="tag-link-18 tag-link-position-25" title="3 topics" style="font-size: 8pt;">pandas</a>
+<a href="http://www.randalolson.com/tag/post-ranking/" class="tag-link-198 tag-link-position-26" title="4 topics" style="font-size: 9.7948717948718pt;">post ranking</a>
+<a href="http://www.randalolson.com/tag/python/" class="tag-link-391 tag-link-position-27" title="8 topics" style="font-size: 14.282051282051pt;">python</a>
+<a href="http://www.randalolson.com/tag/reddit/" class="tag-link-394 tag-link-position-28" title="23 topics" style="font-size: 22pt;">reddit</a>
+<a href="http://www.randalolson.com/tag/research/" class="tag-link-389 tag-link-position-29" title="5 topics" style="font-size: 11.230769230769pt;">research</a>
+<a href="http://www.randalolson.com/tag/road-trip/" class="tag-link-366 tag-link-position-30" title="4 topics" style="font-size: 9.7948717948718pt;">road trip</a>
+<a href="http://www.randalolson.com/tag/science-outreach/" class="tag-link-101 tag-link-position-31" title="3 topics" style="font-size: 8pt;">science outreach</a>
+<a href="http://www.randalolson.com/tag/social-media/" class="tag-link-102 tag-link-position-32" title="3 topics" style="font-size: 8pt;">social media</a>
+<a href="http://www.randalolson.com/tag/statistics/" class="tag-link-388 tag-link-position-33" title="6 topics" style="font-size: 12.487179487179pt;">statistics</a>
+<a href="http://www.randalolson.com/tag/subreddit/" class="tag-link-52 tag-link-position-34" title="6 topics" style="font-size: 12.487179487179pt;">subreddit</a>
+<a href="http://www.randalolson.com/tag/top-posts/" class="tag-link-55 tag-link-position-35" title="4 topics" style="font-size: 9.7948717948718pt;">top posts</a>
+<a href="http://www.randalolson.com/tag/traveling-salesman-problem/" class="tag-link-352 tag-link-position-36" title="6 topics" style="font-size: 12.487179487179pt;">traveling salesman problem</a>
+<a href="http://www.randalolson.com/tag/tutorial/" class="tag-link-390 tag-link-position-37" title="4 topics" style="font-size: 9.7948717948718pt;">tutorial</a>
+<a href="http://www.randalolson.com/tag/twitter/" class="tag-link-33 tag-link-position-38" title="5 topics" style="font-size: 11.230769230769pt;">twitter</a>
+<a href="http://www.randalolson.com/tag/united-states/" class="tag-link-159 tag-link-position-39" title="4 topics" style="font-size: 9.7948717948718pt;">united states</a>
+<a href="http://www.randalolson.com/tag/upvotes/" class="tag-link-56 tag-link-position-40" title="3 topics" style="font-size: 8pt;">upvotes</a>
+<a href="http://www.randalolson.com/tag/usa/" class="tag-link-187 tag-link-position-41" title="12 topics" style="font-size: 17.153846153846pt;">usa</a>
+<a href="http://www.randalolson.com/tag/violence/" class="tag-link-121 tag-link-position-42" title="4 topics" style="font-size: 9.7948717948718pt;">violence</a>
+<a href="http://www.randalolson.com/tag/violent-films/" class="tag-link-113 tag-link-position-43" title="4 topics" style="font-size: 9.7948717948718pt;">violent films</a>
+<a href="http://www.randalolson.com/tag/virality/" class="tag-link-196 tag-link-position-44" title="4 topics" style="font-size: 9.7948717948718pt;">virality</a>
+<a href="http://www.randalolson.com/tag/visualization/" class="tag-link-142 tag-link-position-45" title="5 topics" style="font-size: 11.230769230769pt;">visualization</a></div>
+</div><div id="blog_subscription-2" class="widget-wrapper jetpack_subscription_widget"><div class="widget-title"><h3>Subscribe</h3></div>
+<form action="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#" method="post" accept-charset="utf-8" id="subscribe-blog-blog_subscription-2">
+<div id="subscribe-text"><p>Enter your email address to subscribe to this blog and receive notifications of new posts by email.</p>
+</div> <p id="subscribe-email">
+<label id="jetpack-subscribe-label" for="subscribe-field-blog_subscription-2" style="clip: rect(1px 1px 1px 1px); position: absolute; height: 1px; width: 1px; overflow: hidden;">
+Email Address </label>
+<input type="email" name="email" required="required" class="required" value="" id="subscribe-field-blog_subscription-2" placeholder="Email Address">
+</p>
+<p id="subscribe-submit">
+<input type="hidden" name="action" value="subscribe">
+<input type="hidden" name="source" value="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/">
+<input type="hidden" name="sub-type" value="widget">
+<input type="hidden" name="redirect_fragment" value="blog_subscription-2">
+<input type="submit" value="Subscribe" name="jetpack_subscriptions_widget">
+</p>
+</form>
+<script type="text/rocketscript" data-rocketoptimized="true">
+			/*
+			Custom functionality for safari and IE
+			 */
+			(function( d ) {
+				// In case the placeholder functionality is available we remove labels
+				if ( ( 'placeholder' in d.createElement( 'input' ) ) ) {
+					var label = d.querySelector( 'label[for=subscribe-field-blog_subscription-2]' );
+						label.style.clip 	 = 'rect(1px, 1px, 1px, 1px)';
+						label.style.position = 'absolute';
+						label.style.height   = '1px';
+						label.style.width    = '1px';
+						label.style.overflow = 'hidden';
+				}
+
+				// Make sure the email value is filled in before allowing submit
+				var form = d.getElementById('subscribe-blog-blog_subscription-2'),
+					input = d.getElementById('subscribe-field-blog_subscription-2'),
+					handler = function( event ) {
+						if ( '' === input.value ) {
+							input.focus();
+
+							if ( event.preventDefault ){
+								event.preventDefault();
+							}
+
+							return false;
+						}
+					};
+
+				if ( window.addEventListener ) {
+					form.addEventListener( 'submit', handler, false );
+				} else {
+					form.attachEvent( 'onsubmit', handler );
+				}
+			})( document );
+			</script>
+</div><div id="rss_links-2" class="widget-wrapper widget_rss_links"><div class="widget-title"><h3>RSS Feeds</h3></div><ul><li><a target="_self" href="http://www.randalolson.com/feed/" title="Subscribe to Posts">RSS - Posts</a></li><li><a target="_self" href="http://www.randalolson.com/comments/feed/" title="Subscribe to Comments">RSS - Comments</a></li></ul>
+</div>
+</div> 
+</div> 
+</div> 
+<div id="footer" class="clearfix">
+<div id="footer-wrapper">
+<div class="grid col-940">
+<div class="grid col-540">
+</div> 
+<div class="grid col-380 fit">
+<ul class="social-icons"><li class="twitter-icon"><a href="https://twitter.com/randal_olson"><img src="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/twitter-icon.png" width="24" height="24" alt="Twitter"></a></li><li class="facebook-icon"><a href="https://www.facebook.com/RandalSOlson"><img src="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/facebook-icon.png" width="24" height="24" alt="Facebook"></a></li><li class="linkedin-icon"><a href="http://www.linkedin.com/in/randalolson"><img src="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/linkedin-icon.png" width="24" height="24" alt="LinkedIn"></a></li><li class="youtube-icon"><a href="http://www.youtube.com/user/Rhiever"><img src="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/youtube-icon.png" width="24" height="24" alt="YouTube"></a></li><li class="stumbleupon-icon"><a href="http://www.stumbleupon.com/stumbler/Rhiever"><img src="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/stumbleupon-icon.png" width="24" height="24" alt="StumbleUpon"></a></li><li class="rss-icon"><a href="http://www.randalolson.com/feed/"><img src="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/rss-icon.png" width="24" height="24" alt="RSS Feed"></a></li></ul>  </div> 
+</div> 
+<div class="grid col-300 copyright">
+© 2016<a href="http://www.randalolson.com/" title="Dr. Randal S. Olson">
+Dr. Randal S. Olson </a>
+</div> 
+<div class="grid col-300 scroll-top"><a href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#scroll-top" title="scroll to top">↑</a></div>
+<div class="grid col-300 fit powered">
+<a href="http://cyberchimps.com/responsive-theme/" title="Responsive Theme">
+Responsive Theme</a>
+powered by <a href="http://wordpress.org/" title="WordPress">
+WordPress</a>
+</div> 
+</div> 
+</div> 
+<script class="javascript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/google-syntax-highlighter/Scripts/shCore.js" type="text/rocketscript" data-rocketoptimized="true"></script>
+<script class="javascript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/google-syntax-highlighter/Scripts/shBrushCSharp.js" type="text/rocketscript" data-rocketoptimized="true"></script>
+<script class="javascript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/google-syntax-highlighter/Scripts/shBrushPhp.js" type="text/rocketscript" data-rocketoptimized="true"></script>
+<script class="javascript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/google-syntax-highlighter/Scripts/shBrushJScript.js" type="text/rocketscript" data-rocketoptimized="true"></script>
+<script class="javascript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/google-syntax-highlighter/Scripts/shBrushJava.js" type="text/rocketscript" data-rocketoptimized="true"></script>
+<script class="javascript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/google-syntax-highlighter/Scripts/shBrushVb.js" type="text/rocketscript" data-rocketoptimized="true"></script>
+<script class="javascript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/google-syntax-highlighter/Scripts/shBrushSql.js" type="text/rocketscript" data-rocketoptimized="true"></script>
+<script class="javascript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/google-syntax-highlighter/Scripts/shBrushXml.js" type="text/rocketscript" data-rocketoptimized="true"></script>
+<script class="javascript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/google-syntax-highlighter/Scripts/shBrushDelphi.js" type="text/rocketscript" data-rocketoptimized="true"></script>
+<script class="javascript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/google-syntax-highlighter/Scripts/shBrushPython.js" type="text/rocketscript" data-rocketoptimized="true"></script>
+<script class="javascript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/google-syntax-highlighter/Scripts/shBrushRuby.js" type="text/rocketscript" data-rocketoptimized="true"></script>
+<script class="javascript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/google-syntax-highlighter/Scripts/shBrushCss.js" type="text/rocketscript" data-rocketoptimized="true"></script>
+<script class="javascript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/google-syntax-highlighter/Scripts/shBrushCpp.js" type="text/rocketscript" data-rocketoptimized="true"></script>
+<script class="javascript" type="text/rocketscript" data-rocketoptimized="true">
+dp.SyntaxHighlighter.ClipboardSwf = 'http://www.randalolson.com/wp-content/plugins/google-syntax-highlighter/Scripts/clipboard.swf';
+dp.SyntaxHighlighter.HighlightAll('code');
+</script><style>.dp-py .builtins { color: #ff1493; }.dp-py .magicmethods { color: #808080; }.dp-py .exceptions { color: brown; }.dp-py .types { color: brown; font-style: italic; }.dp-py .commonlibs { color: #8A2BE2; font-style: italic; }</style><style>.dp-py .builtins { color: #ff1493; }.dp-py .magicmethods { color: #808080; }.dp-py .exceptions { color: brown; }.dp-py .types { color: brown; font-style: italic; }.dp-py .commonlibs { color: #8A2BE2; font-style: italic; }</style><style>.dp-py .builtins { color: #ff1493; }.dp-py .magicmethods { color: #808080; }.dp-py .exceptions { color: brown; }.dp-py .types { color: brown; font-style: italic; }.dp-py .commonlibs { color: #8A2BE2; font-style: italic; }</style><style>.dp-py .builtins { color: #ff1493; }.dp-py .magicmethods { color: #808080; }.dp-py .exceptions { color: brown; }.dp-py .types { color: brown; font-style: italic; }.dp-py .commonlibs { color: #8A2BE2; font-style: italic; }</style><style>.dp-py .builtins { color: #ff1493; }.dp-py .magicmethods { color: #808080; }.dp-py .exceptions { color: brown; }.dp-py .types { color: brown; font-style: italic; }.dp-py .commonlibs { color: #8A2BE2; font-style: italic; }</style><style>.dp-py .builtins { color: #ff1493; }.dp-py .magicmethods { color: #808080; }.dp-py .exceptions { color: brown; }.dp-py .types { color: brown; font-style: italic; }.dp-py .commonlibs { color: #8A2BE2; font-style: italic; }</style><style>.dp-py .builtins { color: #ff1493; }.dp-py .magicmethods { color: #808080; }.dp-py .exceptions { color: brown; }.dp-py .types { color: brown; font-style: italic; }.dp-py .commonlibs { color: #8A2BE2; font-style: italic; }</style><style>.dp-py .builtins { color: #ff1493; }.dp-py .magicmethods { color: #808080; }.dp-py .exceptions { color: brown; }.dp-py .types { color: brown; font-style: italic; }.dp-py .commonlibs { color: #8A2BE2; font-style: italic; }</style><style>.dp-py .builtins { color: #ff1493; }.dp-py .magicmethods { color: #808080; }.dp-py .exceptions { color: brown; }.dp-py .types { color: brown; font-style: italic; }.dp-py .commonlibs { color: #8A2BE2; font-style: italic; }</style>
+<script type="text/rocketscript" data-rocketoptimized="true">
+var colomatduration = 'fast';
+var colomatslideEffect = 'slideFade';
+</script> <div style="display:none">
+<div class="grofile-hash-map-bc264e8b1145c5291892c01cc9174db7">
+</div>
+</div>
+<script type="text/rocketscript" data-rocketoptimized="true">
+		window.WPCOM_sharing_counts = {"http:\/\/www.randalolson.com\/2016\/05\/08\/tpot-a-python-tool-for-automating-data-science\/":8090};
+	</script>
+<script type="text/rocketscript" data-rocketoptimized="true">
+			var windowOpen;
+		jQuery(document).on( 'ready post-load', function(){
+			jQuery( 'a.share-facebook' ).on( 'click', function() {
+				if ( 'undefined' !== typeof windowOpen ){ // If there's another sharing window open, close it.
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery(this).attr( 'href' ), 'wpcomfacebook', 'menubar=1,resizable=1,width=600,height=400' );
+				return false;
+			});
+		});
+		</script>
+<script type="text/rocketscript" data-rocketoptimized="true">
+			var windowOpen;
+		jQuery(document).on( 'ready post-load', function(){
+			jQuery( 'a.share-twitter' ).on( 'click', function() {
+				if ( 'undefined' !== typeof windowOpen ){ // If there's another sharing window open, close it.
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery(this).attr( 'href' ), 'wpcomtwitter', 'menubar=1,resizable=1,width=600,height=350' );
+				return false;
+			});
+		});
+		</script>
+<script type="text/rocketscript" data-rocketoptimized="true">
+			var windowOpen;
+		jQuery(document).on( 'ready post-load', function(){
+			jQuery( 'a.share-linkedin' ).on( 'click', function() {
+				if ( 'undefined' !== typeof windowOpen ){ // If there's another sharing window open, close it.
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery(this).attr( 'href' ), 'wpcomlinkedin', 'menubar=1,resizable=1,width=580,height=450' );
+				return false;
+			});
+		});
+		</script>
+<script type="text/rocketscript" data-rocketoptimized="true">
+			var windowOpen;
+		jQuery(document).on( 'ready post-load', function(){
+			jQuery( 'a.share-google-plus-1' ).on( 'click', function() {
+				if ( 'undefined' !== typeof windowOpen ){ // If there's another sharing window open, close it.
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery(this).attr( 'href' ), 'wpcomgoogle-plus-1', 'menubar=1,resizable=1,width=480,height=550' );
+				return false;
+			});
+		});
+		</script>
+<script type="text/rocketscript" data-rocketoptimized="true">
+			var windowOpen;
+		jQuery(document).on( 'ready post-load', function(){
+			jQuery( 'a.share-tumblr' ).on( 'click', function() {
+				if ( 'undefined' !== typeof windowOpen ){ // If there's another sharing window open, close it.
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery(this).attr( 'href' ), 'wpcomtumblr', 'menubar=1,resizable=1,width=450,height=450' );
+				return false;
+			});
+		});
+		</script>
+<div id="sharing_email" style="display: none;">
+<form action="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/" method="post">
+<label for="target_email">Send to Email Address</label>
+<input type="email" name="target_email" id="target_email" value="">
+<label for="source_name">Your Name</label>
+<input type="text" name="source_name" id="source_name" value="">
+<label for="source_email">Your Email Address</label>
+<input type="email" name="source_email" id="source_email" value="">
+<input type="text" id="jetpack-source_f_name" name="source_f_name" class="input" value="" size="25" autocomplete="off">
+<script type="text/rocketscript" data-rocketoptimized="true"> document.getElementById('jetpack-source_f_name').value = ''; </script>
+<img style="float: right; display: none" class="loading" src="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/loading.gif" alt="loading" width="16" height="16">
+<input type="submit" value="Send Email" class="sharing_send">
+<a rel="nofollow" href="http://www.randalolson.com/2016/05/08/tpot-a-python-tool-for-automating-data-science/#cancel" class="sharing_cancel">Cancel</a>
+<div class="errors errors-1" style="display: none;">
+Post was not sent - check your email addresses! </div>
+<div class="errors errors-2" style="display: none;">
+Email check failed, please try again </div>
+<div class="errors errors-3" style="display: none;">
+Sorry, your blog cannot share posts by email. </div>
+</form>
+</div>
+<script type="text/rocketscript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/contact-form-7/includes/js/jquery.form.min.js?ver=3.51.0-2014.06.20" data-rocketoptimized="true"></script>
+<script type="text/rocketscript" data-rocketoptimized="true">
+/* <![CDATA[ */
+var _wpcf7 = {"loaderUrl":"http:\/\/www.randalolson.com\/wp-content\/plugins\/contact-form-7\/images\/ajax-loader.gif","recaptchaEmpty":"Please verify that you are not a robot.","sending":"Sending ...","cached":"1"};
+/* ]]> */
+</script>
+<script type="text/rocketscript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/contact-form-7/includes/js/scripts.js?ver=4.4.2" data-rocketoptimized="true"></script>
+<script type="text/rocketscript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/jquery-collapse-o-matic/js/collapse.js?ver=1.6.2" data-rocketoptimized="true"></script>
+<script type="text/rocketscript" data-rocketsrc="http://s0.wp.com/wp-content/js/devicepx-jetpack.js?ver=201622" data-rocketoptimized="true"></script>
+<script type="text/rocketscript" data-rocketsrc="http://s.gravatar.com/js/gprofiles.js?ver=2016Junaa" data-rocketoptimized="true"></script>
+<script type="text/rocketscript" data-rocketoptimized="true">
+/* <![CDATA[ */
+var WPGroHo = {"my_hash":""};
+/* ]]> */
+</script>
+<script type="text/rocketscript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/jetpack/modules/wpgroho.js?ver=4.5.2" data-rocketoptimized="true"></script>
+<script type="text/rocketscript" data-rocketsrc="http://www.randalolson.com/wp-content/themes/responsive/core/js/responsive-scripts.min.js?ver=1.2.6" data-rocketoptimized="true"></script>
+<script type="text/rocketscript" data-rocketsrc="http://www.randalolson.com/wp-content/themes/responsive/core/js/jquery.placeholder.min.js?ver=2.0.7" data-rocketoptimized="true"></script>
+<script type="text/rocketscript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/jetpack/_inc/twitter-timeline.js?ver=4.0.0" data-rocketoptimized="true"></script>
+<script type="text/rocketscript" data-rocketsrc="http://www.randalolson.com/wp-includes/js/wp-embed.min.js?ver=4.5.2" data-rocketoptimized="true"></script>
+<script type="text/rocketscript" data-rocketoptimized="true">
+/* <![CDATA[ */
+var countVars = {"disqusShortname":"randalolson"};
+/* ]]> */
+</script>
+<script type="text/rocketscript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/disqus-comment-system/media/js/count.js?ver=4.5.2" data-rocketoptimized="true"></script>
+<script type="text/rocketscript" data-rocketoptimized="true">
+/* <![CDATA[ */
+var sharing_js_options = {"lang":"en","counts":"1"};
+/* ]]> */
+</script>
+<script type="text/rocketscript" data-rocketsrc="http://www.randalolson.com/wp-content/plugins/jetpack/modules/sharedaddy/sharing.js?ver=4.0.3" data-rocketoptimized="true"></script>
+
+
+ <iframe id="rufous-sandbox" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" style="position: absolute; visibility: hidden; display: none; width: 0px; height: 0px; padding: 0px; border: none;" src="./TPOT_ A Python tool for automating data science _ Dr. Randal S. Olson_files/saved_resource(1).html"></iframe></body></html>
